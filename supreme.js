@@ -47,20 +47,7 @@ const randomUserAgent = require('random-useragent');
 
 
     // Datos del cliente (para el formulario de compra)
-    const email = 'vmhowleyh@gmail.com';
-    const name = 'Victor Manuel';
-    const lastName = 'Morillo Howley';
-    const address = '3400 Paul Ave apt 15t';
-    const city = 'bronx';
-    const state = 'NY';
-    const zipCode = '10468';
-    const phone = '3055130441';
-    const ccNumber = '4213830009932406';
-    const cardHolder = 'Victor Morillo';
-    const exp = '11/26';
-    const cvv = '311';
-    const sizeToSelect = '1'; 
-    const colorToSelect = '37194695672079';
+   
 
     // Verificar si el producto está disponible
     const isAvailable = await page.$('button[data-testid="add-to-cart-button"]');
