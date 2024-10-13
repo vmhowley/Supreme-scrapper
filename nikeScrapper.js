@@ -1,52 +1,50 @@
-const { chromium, webkit, firefox } = require('playwright-extra');
+const { chromium, webkit, firefox } = require('playwright');
 const stealth = require('puppeteer-extra-plugin-stealth');
 const fs = require('node:fs');
 const path = require('path');
 
-chromium.use(stealth());
+// chromium.use(stealth());
 
 
 (async () => {
-  const proxyServer = 'us.922s5.net:6300'; // Proxy con autenticación
-  const proxyUsername = '23991357-zone-custom-sessid-K7VtNkMb';
-  const proxyPassword = 'rUNzyYraLl';
-  const extensionPath = path.join(__dirname, 'CapSolver.Browser.Extension');
-    // Inicia el navegador
-    const browser = await chromium.launch({
-      ignoreHTTPSErrors: true,
-      headless: false,
-      proxy: { server: proxyServer, username: proxyUsername, password: proxyPassword },
-      args: [
-        `--disable-extensions-except=${extensionPath}`,
-        `--load-extension=${extensionPath}`
-      ]
-    });
-  
-      // const context = await browser.newContext({
-      //     viewport: { width: 1280, height: 720 }, // Tamaño típico de pantalla
-      //     // geolocation: { longitude: -122.4194, latitude: 37.7749 }, // Simular geolocalización
-      //     locale: 'en-US', // Idioma del navegador
-      //     userAgent: randomUserAgent.getRandom(), // Rotación de User-Agent
-      // });
-  
-    const page = await browser.newPage();
+ // Configuración de proxy
+ const proxyServer = 'us.922s5.net:6300'; // Proxy con autenticación
+ const proxyUsername = '23991357-zone-custom-sessid-K7VtNkMb';
+ const proxyPassword = 'rUNzyYraLl';
+ const extensionPath = path.join(__dirname, 'CapSolver.Browser.Extension');
+
+ // Configurar navegador con proxy y otras medidas de protección
+
+const browser = await chromium.launchPersistentContext('', {
+ headless: false,
+ proxy: { server: proxyServer, username: proxyUsername, password: proxyPassword },
+ args: [
+   `--disable-extensions-except=${extensionPath}`,
+   `--load-extension=${extensionPath}`
+ ]
+});
+
+ // const context = await browser.newContext({
+ //     viewport: { width: 1280, height: 720 }, // Tamaño típico de pantalla
+ //     // geolocation: { longitude: -122.4194, latitude: 37.7749 }, // Simular geolocalización
+ //     locale: 'en-US', // Idioma del navegador
+ //     userAgent: randomUserAgent.getRandom(), // Rotación de User-Agent
+ // });
+
+ const page = await browser.newPage();
+
+ // Simular movimientos del ratón y desplazamiento
+ await page.mouse.move(100, 100);
+ await page.mouse.move(200, 300);
+
 
     // URL de la página de producto específico en Nike (asegúrate de pegar la URL del producto exacto que deseas)
     const productUrl = 'https://www.nike.com/launch/t/nocta-hot-step-2-black'; // Cambia esto a la URL del producto
      await page.goto(productUrl);
-		page.waitForLoadState('networkidle0'); // Wait for page to finish loading
-    if (fs.existsSync('cookies.json')) {
-        const cookies = JSON.parse(fs.readFileSync('cookies.json', 'utf8'));
-        await page.context().addCookies(cookies);
-        console.log('Cookies cargadas');
-      }else{
-          const cookies = await page.context().cookies();
-          fs.writeFileSync('cookies.json', JSON.stringify(cookies, null, 2));
-          console.log('Cookies guardadas');
-        }
+   
 
         const sizeToSelect = '10'; // Cambia a la talla que desees
-    const isAvailable = await page.$(`button[id=size_item_radio${sizeToSelect}]`); // Selector del botón para agregar al carrito
+    const isAvailable = await page.waitForSelector(`button[id=size_item_radio${sizeToSelect}]`); // Selector del botón para agregar al carrito
 
     if (isAvailable) {
         console.log('El producto está disponible. Seleccionando talla...');
